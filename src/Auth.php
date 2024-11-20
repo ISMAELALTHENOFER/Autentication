@@ -1,27 +1,26 @@
 <?php
 require_once __DIR__ . '/../config/conexion.php';
 
-
 class Auth
 {
     public static function authenticateUser($email, $password)
     {
         $conn = getConnection();
-        $stmt = $conn->prepare("SELECT id, password FROM users WHERE email = ?");
+        $stmt = $conn->prepare("SELECT id, password, name FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
 
         $stmt->execute();
         $stmt->store_result();
 
         if ($stmt->num_rows > 0) {
-            $stmt->bind_result($userId, $hashedPassword);
+            $stmt->bind_result($userId, $hashedPassword, $userName);
             $stmt->fetch();
 
             if (password_verify($password, $hashedPassword)) {
                 return [
                     'status' => true,
                     'message' => 'Autenticación exitosa',
-                    'user_id' => $userId
+                    'user_name' => $userName
                 ];
             } else {
                 return [
@@ -40,3 +39,4 @@ class Auth
         $conn->close();
     }
 }
+?>
