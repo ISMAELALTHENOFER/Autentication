@@ -1,10 +1,17 @@
 <?php
-require_once __DIR__ . '/src/User.php';
+require_once __DIR__ . '/../models/Auth.php';
 
 $message = '';
+$messageClass = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Incluimos el nombre en la llamada al método `createUser`.
-    $message = User::createUser($_POST['email'], $_POST['password'], $_POST['name']);
+    $result = Auth::authenticateUser($_POST['email'], $_POST['password']);
+    if ($result['status']) {
+        $message = "¡Bienvenido : " . $result['user_name'] . "!";
+        $messageClass = 'alert-success';
+    } else {
+        $message = $result['message'];
+        $messageClass = 'alert-danger';
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -13,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro</title>
+    <title>Iniciar Sesión</title>
     <!-- Incluimos los estilos de Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -24,17 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="col-md-6">
                 <div class="card shadow">
                     <div class="card-body">
-                        <h1 class="text-center mb-4">Registro</h1>
+                        <h1 class="text-center mb-4">Iniciar Sesión</h1>
                         <?php if ($message): ?>
-                            <div class="alert <?= strpos($message, 'exitosamente') !== false ? 'alert-success' : 'alert-danger' ?>">
-                                <?= htmlspecialchars($message) ?>
-                            </div>
+                            <div class="alert <?= $messageClass ?>"><?= htmlspecialchars($message) ?></div>
                         <?php endif; ?>
                         <form method="POST">
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Nombre completo</label>
-                                <input type="text" id="name" name="name" class="form-control" placeholder="Ingresa tu nombre completo" required>
-                            </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Correo electrónico</label>
                                 <input type="email" id="email" name="email" class="form-control" placeholder="Ingresa tu correo electrónico" required>
@@ -44,10 +45,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <input type="password" id="password" name="password" class="form-control" placeholder="Ingresa tu contraseña" required>
                             </div>
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-primary">Registrar</button>
+                                <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
                             </div>
                         </form>
-                        <p class="mt-3 text-center">¿Ya tienes una cuenta? <a href="login.php">Inicia sesión aquí</a>.</p>
+                        <p class="mt-3 text-center">¿No tienes una cuenta? <a href="register.php">Regístrate aquí</a>.</p>
                     </div>
                 </div>
             </div>
@@ -55,7 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
     <!-- Incluimos los scripts de Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
 </body>
 
 </html>

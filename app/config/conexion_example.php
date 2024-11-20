@@ -2,9 +2,9 @@
 function getConnection()
 {
     $host = 'localhost';
-    $dbname = 'proyecto';
-    $username = 'root';
-    $password = 'Cuenta.1234';
+    $dbname = 'baseDeDatos';
+    $username = 'usuario';
+    $password = 'clave';
 
     $conn = new mysqli($host, $username, $password, $dbname);
 
